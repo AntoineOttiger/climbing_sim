@@ -110,14 +110,14 @@ impl World{
 
         // update physics
         for c in self.creatures.iter_mut() {
-            let mut _counter = 0;
-            for p in c.particles.iter_mut(){
-                if is_mouse_button_down(MouseButton::Left) && _counter==0{
-                    hold = true;
-                }
 
-                p.step(dt, self.gravity, hold);
-                hold = false;
+            if is_mouse_button_down(MouseButton::Left){
+                c.joints[0].hold = true;
+            }
+
+            for p in c.particles.iter_mut(){
+
+                p.step(dt, self.gravity);
 
                 if p.x - self.radius <= 0.0 {
                     p.x = self.radius;
@@ -138,10 +138,9 @@ impl World{
                     p.y = self.h - self.radius;
                     p.vy = -p.vy * self.wall_restitution;
                 }
-                _counter += 1;
+
             
             }
-
         }
 
         // solve collisions
@@ -161,7 +160,9 @@ impl World{
         }
         // update creatures
         for c in  self.creatures.iter_mut() {
-            c.update(self.time)   
+            c.update(self.time);
+            c.joints[0].hold = false;
+
         }
 
     }

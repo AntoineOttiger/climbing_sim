@@ -7,13 +7,36 @@ pub struct Particle {
     pub vx: f32,
     pub vy: f32,
     pub color: Color,
+    pub hold : bool,
 }
 
 impl Particle {
 
+    pub fn new(
+            x: f32,
+            y: f32,
+            vx: f32,
+            vy: f32,
+            color: Color,
+        ) -> Self {
+                let mut particle  = Self {
+                    x,
+                    y,
+                    vx,
+                    vy,
+                    color,
+                    hold:false,
+                };
+                particle.init();
+                
+                particle
+            }
+    
+    fn init(&mut self) {
+    }
 
-    pub fn step(&mut self, dt: f32, g: f32, hold:bool) {
-        if hold {
+    pub fn step(&mut self, dt: f32, g: f32) {
+        if self.hold {
             self.vx = 0.0;
             self.vy = 0.0;
         }
@@ -32,10 +55,30 @@ impl Particle {
 pub struct Joint {
     a: usize,
     b: usize,
-    c: usize
+    c: usize,
+    pub hold: bool,
 }
 
 impl Joint {
+
+    pub fn new(
+        a: usize,
+        b: usize,
+        c: usize,          
+        ) -> Self {
+                let mut joint  = Self {
+                    a,
+                    b,
+                    c,
+                    hold:false,
+                };
+                joint.init();
+                joint
+            }
+    
+    fn init(&mut self) {
+    }
+
     pub fn update(
         &mut self,
         particles: &mut Vec<Particle>,
@@ -69,10 +112,17 @@ impl Joint {
         // force de rappel + amortissement
         let fx = error_x * strength - rel_vx * damping;
         let fy = error_y * strength - rel_vy * damping;
-
+        
         // on pousse A vers sa cible
-        particles[self.a].vx += fx;
-        particles[self.a].vy += fy;
+        if self.hold {
+            particles[self.a].vx = 0.0;
+            particles[self.a].vy = 0.0;
+            
+        }
+        else{
+            particles[self.a].vx += fx;
+            particles[self.a].vy += fy;
+        }
 
         // réaction : on répartit sur B et C
         particles[self.b].vx -= fx * 0.5;
@@ -214,29 +264,29 @@ impl Creature {
         let pos_x = 100.0;
         let pos_y = 100.0; 
 
-        // left arm
-        self.particles.push(Particle {x: pos_x, y: pos_y, vx: 0.0, vy: 0.0, color: self.color});
-        self.particles.push(Particle {x: pos_x, y: pos_y+forarm, vx: 0.0, vy: 0.0, color: self.color});
-        self.particles.push(Particle {x: pos_x+arm, y: pos_y+forarm, vx: 0.0, vy: 0.0, color: self.color});
+        //left arm
+        self.particles.push(Particle::new(pos_x, pos_y, 0.0, 0.0, self.color));
+        self.particles.push(Particle::new(pos_x, pos_y + forarm, 0.0, 0.0, self.color));
+        self.particles.push(Particle::new(pos_x + arm, pos_y + forarm, 0.0, 0.0, self.color));
 
         // right arm
-        self.particles.push(Particle {x: pos_x+2.0*arm+2.0*clavicle, y: pos_y, vx: 0.0, vy: 0.0, color: self.color});
-        self.particles.push(Particle {x: pos_x+2.0*arm+2.0*clavicle, y: pos_y+forarm, vx: 0.0, vy: 0.0, color: self.color});
-        self.particles.push(Particle {x: pos_x+arm+2.0*clavicle, y: pos_y+forarm, vx: 0.0, vy: 0.0, color: self.color});
+        self.particles.push(Particle::new(pos_x + 2.0 * arm + 2.0 * clavicle, pos_y, 0.0, 0.0, self.color));
+        self.particles.push(Particle::new(pos_x + 2.0 * arm + 2.0 * clavicle, pos_y + forarm, 0.0, 0.0, self.color));
+        self.particles.push(Particle::new(pos_x + arm + 2.0 * clavicle, pos_y + forarm, 0.0, 0.0, self.color));
 
         // left leg
-        self.particles.push(Particle {x: pos_x+clavicle-hip, y: pos_y+forarm+trunc+calf, vx: 0.0, vy: 0.0, color: self.color});
-        self.particles.push(Particle {x: pos_x+clavicle-hip, y: pos_y+forarm+trunc, vx: 0.0, vy: 0.0, color: self.color});
-        self.particles.push(Particle {x: pos_x+clavicle-hip+tigh, y: pos_y+forarm+trunc, vx: 0.0, vy: 0.0, color: self.color});
+        self.particles.push(Particle::new(pos_x + clavicle - hip, pos_y + forarm + trunc + calf, 0.0, 0.0, self.color));
+        self.particles.push(Particle::new(pos_x + clavicle - hip, pos_y + forarm + trunc, 0.0, 0.0, self.color));
+        self.particles.push(Particle::new(pos_x + clavicle - hip + tigh, pos_y + forarm + trunc, 0.0, 0.0, self.color));
 
         // right leg
-        self.particles.push(Particle {x: pos_x+2.0*tigh+2.0*hip+clavicle-hip, y: pos_y+forarm+trunc+calf, vx: 0.0, vy: 0.0, color: self.color});
-        self.particles.push(Particle {x: pos_x+2.0*tigh+2.0*hip+clavicle-hip, y: pos_y+forarm+trunc, vx: 0.0, vy: 0.0, color: self.color});
-        self.particles.push(Particle {x: pos_x+tigh+2.0*hip+clavicle-hip, y: pos_y+forarm+trunc, vx: 0.0, vy: 0.0, color: self.color});
+        self.particles.push(Particle::new(pos_x + 2.0 * tigh + 2.0 * hip + clavicle - hip, pos_y + forarm + trunc + calf, 0.0, 0.0, self.color));
+        self.particles.push(Particle::new(pos_x + 2.0 * tigh + 2.0 * hip + clavicle - hip, pos_y + forarm + trunc, 0.0, 0.0, self.color));
+        self.particles.push(Particle::new(pos_x + tigh + 2.0 * hip + clavicle - hip, pos_y + forarm + trunc, 0.0, 0.0, self.color));
 
         // skeleton
-        self.particles.push(Particle {x: pos_x+arm+clavicle, y: pos_y+forarm+trunc, vx: 0.0, vy: 0.0, color: self.color});
-        self.particles.push(Particle {x: pos_x+arm+clavicle, y: pos_y+forarm, vx: 0.0, vy: 0.0, color: self.color});
+        self.particles.push(Particle::new(pos_x + arm + clavicle, pos_y + forarm + trunc, 0.0, 0.0, self.color));
+        self.particles.push(Particle::new(pos_x + arm + clavicle, pos_y + forarm, 0.0, 0.0, self.color));
         
 
         //set links
@@ -264,15 +314,15 @@ impl Creature {
         self.links.push(Link {a :2, b : 8, rest_length : trunc, visible : false});
         self.links.push(Link {a :5, b : 11, rest_length : trunc, visible : false});
         //set joints
-        self.joints.push(Joint {a : 0, b : 1, c: 2});
-        self.joints.push(Joint {a : 3, b : 4, c: 5});
-        self.joints.push(Joint {a : 6, b : 7, c: 8});
-        self.joints.push(Joint {a : 9, b : 10, c: 11});
+        self.joints.push(Joint::new(0, 1, 2));
+        self.joints.push(Joint::new(3, 4, 5));
+        self.joints.push(Joint::new(6, 7, 8));
+        self.joints.push(Joint::new(9, 10, 11));
         
         // set target positions
         //self.target_pos = vec![vec![-50.0, -50.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![50.0, 50.0]];
         let target_pos_1 = vec![vec![-50.0, -50.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![50.0, 50.0]];
-        let target_pos_2 = vec![vec![-25.0, -50.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![50.0, 50.0]];
+        let target_pos_2 = vec![vec![-25.0, -70.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![-50.0, 50.0]];
         self.target_pos_lst = vec![target_pos_1, target_pos_2];
     }
 
