@@ -22,7 +22,7 @@ async fn main() {
 
     let mut world = World::new(
         creatures,
-        1.0,
+        0.0,
         7.0,
         0.8,
         0.95,

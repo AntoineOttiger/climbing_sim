@@ -65,6 +65,7 @@ pub struct World {
     solver_iterations: i16,
     w : f32,
     h : f32,
+    time : f32,
 }
 
 impl World{
@@ -88,6 +89,7 @@ impl World{
                 solver_iterations,
                 w,
                 h,
+                time : 0.0,
             };
             world.init();
             
@@ -102,6 +104,7 @@ impl World{
     pub fn step(&mut self, dt:f32){
 
         let mut hold = false;
+        self.time += dt; 
 
 
 
@@ -156,21 +159,10 @@ impl World{
                 }
             }
         }
-        // update links
+        // update creatures
         for c in  self.creatures.iter_mut() {
-            for link in &mut c.links{
-                link.update(&mut c.particles);
-
-            }
+            c.update(self.time)   
         }
-
-        // update joints
-        for c in  self.creatures.iter_mut() {
-            for (join, pos) in c.joints.iter_mut().zip(c.target_pos.iter()){
-                join.update(&mut c.particles, pos[0], pos[1], 0.2);
-            }
-        }
-
 
     }
 

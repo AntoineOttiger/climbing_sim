@@ -165,7 +165,8 @@ pub struct  Creature {
     pub joints: Vec<Joint>,
 
     // [top_left, top_right, bottom_left, bottom_right]
-    pub target_pos : Vec<Vec<f32>>,
+    pub target_pos_lst: Vec<Vec<Vec<f32>>>,
+    pos_time : f32,
 }
 
 impl Creature {
@@ -185,7 +186,8 @@ impl Creature {
             particles : vec![],
             links : vec![],
             joints : vec![],
-            target_pos : vec![],
+            target_pos_lst : vec![],
+            pos_time : 5.0,
 
         };
         creature.init();
@@ -266,9 +268,28 @@ impl Creature {
         self.joints.push(Joint {a : 3, b : 4, c: 5});
         self.joints.push(Joint {a : 6, b : 7, c: 8});
         self.joints.push(Joint {a : 9, b : 10, c: 11});
-        self.target_pos = vec![vec![-50.0, -50.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![50.0, 50.0]]
+        
+        // set target positions
+        //self.target_pos = vec![vec![-50.0, -50.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![50.0, 50.0]];
+        let target_pos_1 = vec![vec![-50.0, -50.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![50.0, 50.0]];
+        let target_pos_2 = vec![vec![-25.0, -50.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![50.0, 50.0]];
+        self.target_pos_lst = vec![target_pos_1, target_pos_2];
+    }
 
+    pub fn update(&mut self, time:f32) {
+        
 
+        let trg_pos_idx = ((time / self.pos_time) as usize) % self.target_pos_lst.len();  
+        let target_pos = &self.target_pos_lst[trg_pos_idx];
+        // update links
+        for link in &mut self.links {
+            link.update(&mut self.particles);
+        }
+
+        // update joints
+        for (join, pos) in self.joints.iter_mut().zip(target_pos.iter()){   
+            join.update(&mut self.particles, pos[0], pos[1], 0.2);
+        }
     }
 
 }
