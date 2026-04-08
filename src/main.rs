@@ -6,6 +6,7 @@ use world::World;
 mod creature;
 use creature::Creature;
 
+mod camera;
 
 #[macroquad::main("Climbing Sim")]
 async fn main() {

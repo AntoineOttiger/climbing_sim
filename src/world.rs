@@ -2,6 +2,7 @@ use macroquad::prelude::*;
 
 use crate::creature::Creature;
 use crate::creature::Particle;
+use crate::camera::Camera2DWorld;
 
 fn collide(a: &mut Particle, b: &mut Particle, radius: f32, restitution: f32) {
     let dx = b.x - a.x;
@@ -66,6 +67,8 @@ pub struct World {
     w : f32,
     h : f32,
     time : f32,
+    cam : Camera2DWorld,
+    last_mouse : Vec2,
 }
 
 impl World{
@@ -90,6 +93,8 @@ impl World{
                 w,
                 h,
                 time : 0.0,
+                cam : Camera2DWorld::new(),
+                last_mouse : vec2(0.0, 0.0),
             };
             world.init();
             
@@ -168,14 +173,38 @@ impl World{
     }
 
     pub fn draw(&mut self){
+
         clear_background(BLACK);
+
+        let mouse = {
+        let (mx, my) = mouse_position();
+            vec2(mx, my)
+        };
+        // Pan avec clic droit maintenu
+        if is_mouse_button_down(MouseButton::Left) {
+            let delta = (mouse - self.last_mouse)*0.001;
+            self.cam.pan_pixels(delta);
+        }
+
+        // Zoom molette centré sur la souris
+        let (_wheel_x, wheel_y) = mouse_wheel();
+        if wheel_y > 0.0 {
+            self.cam.zoom_at(mouse, 1.1);
+        } else if wheel_y < 0.0 {
+            self.cam.zoom_at(mouse, 0.9);
+        }
+
         for c in  self.creatures.iter_mut() {
+
             for link in &mut c.links{
-                link.draw(&mut c.particles);
+                link.draw(&mut c.particles, self.cam);
             }
 
             for p in &c.particles {
-                draw_circle(p.x, p.y, self.radius, p.color);
+                let p_cam = self.cam.world_to_screen(vec2(p.x, p.y));
+
+                println!("{}", p_cam.x);
+                draw_circle(p_cam.x, p_cam.y, self.radius, p.color);
             }        
         }
     }
