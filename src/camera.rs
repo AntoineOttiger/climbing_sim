@@ -36,7 +36,7 @@ impl Camera2DWorld {
         let before = self.screen_to_world(mouse_screen);
 
         self.zoom *= zoom_factor;
-        self.zoom = self.zoom.clamp(1.0, 500.0);
+        self.zoom = self.zoom.clamp(0.1, 500.0);
 
         let after = self.screen_to_world(mouse_screen);
 

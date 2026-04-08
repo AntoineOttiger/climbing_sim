@@ -182,7 +182,7 @@ impl World{
         };
         // Pan avec clic droit maintenu
         if is_mouse_button_down(MouseButton::Left) {
-            let delta = (mouse - self.last_mouse)*0.001;
+            let delta = mouse - self.last_mouse;
             self.cam.pan_pixels(delta);
         }
 
@@ -207,5 +207,6 @@ impl World{
                 draw_circle(p_cam.x, p_cam.y, self.radius, p.color);
             }        
         }
+        self.last_mouse = mouse;
     }
 }
