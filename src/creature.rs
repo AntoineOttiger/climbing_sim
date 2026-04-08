@@ -1,6 +1,7 @@
 use macroquad::prelude::*;
 
 use crate::camera::Camera2DWorld;
+use crate::camera::draw_world_line;
 
 #[derive(Copy, Clone)]
 pub struct Particle {
@@ -196,10 +197,12 @@ impl Link {
             let color = GREEN;
             
 
-            let a = cam.world_to_screen(vec2(particles[self.a].x, particles[self.a].y));
-            let b = cam.world_to_screen(vec2(particles[self.b].x, particles[self.b].y));
      
-            draw_line(a.x, a.y, b.x, b.y, thickness, color);
+            draw_world_line(&cam, 
+                            vec2(particles[self.a].x, particles[self.a].y), 
+                            vec2(particles[self.b].x, particles[self.b].y), 
+                            thickness, 
+                            color);
 
         }
 

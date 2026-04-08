@@ -122,9 +122,30 @@ fn draw_axes(cam: &Camera2DWorld) {
     draw_line(y_axis_a.x, y_axis_a.y, y_axis_b.x, y_axis_b.y, 2.0, BLUE);
 }
 
-fn draw_world_point(cam: &Camera2DWorld, p: Vec2, radius_world: f32, color: Color) {
+pub fn draw_world_point(cam: &Camera2DWorld, p: Vec2, radius_world: f32, color: Color) {
     let screen_pos = cam.world_to_screen(p);
     let radius_screen = radius_world * cam.zoom;
     draw_circle(screen_pos.x, screen_pos.y, radius_screen.max(2.0), color);
 }
 
+pub fn draw_world_line(
+    cam: &Camera2DWorld,
+    a: Vec2,
+    b: Vec2,
+    thickness_world: f32,
+    color: Color,
+) {
+    let sa = cam.world_to_screen(a);
+    let sb = cam.world_to_screen(b);
+
+    let thickness_screen = (thickness_world * cam.zoom).max(1.0);
+
+    draw_line(
+        sa.x,
+        sa.y,
+        sb.x,
+        sb.y,
+        thickness_screen,
+        color,
+    );
+}

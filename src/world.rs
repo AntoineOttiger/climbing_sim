@@ -3,6 +3,8 @@ use macroquad::prelude::*;
 use crate::creature::Creature;
 use crate::creature::Particle;
 use crate::camera::Camera2DWorld;
+use crate::camera::draw_world_point;
+use crate::camera::draw_world_line;
 
 fn collide(a: &mut Particle, b: &mut Particle, radius: f32, restitution: f32) {
     let dx = b.x - a.x;
@@ -201,10 +203,8 @@ impl World{
             }
 
             for p in &c.particles {
-                let p_cam = self.cam.world_to_screen(vec2(p.x, p.y));
 
-                println!("{}", p_cam.x);
-                draw_circle(p_cam.x, p_cam.y, self.radius, p.color);
+                draw_world_point(&self.cam, vec2(p.x, p.y), self.radius, p.color);
             }        
         }
         self.last_mouse = mouse;
