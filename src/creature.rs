@@ -1,3 +1,5 @@
+use std::f32;
+
 use macroquad::prelude::*;
 
 use crate::camera::Camera2DWorld;
@@ -11,6 +13,11 @@ pub struct Particle {
     pub vy: f32,
     pub color: Color,
     pub hold : bool,
+}
+
+enum Pos {
+    Float(f32),
+    Bool(bool)
 }
 
 impl Particle {
@@ -88,6 +95,7 @@ impl Joint {
         target_rel_ax: f32,
         target_rel_ay: f32,
         strength: f32,
+        hold: bool
     ) {
         let ax = particles[self.a].x;
         let ay = particles[self.a].y;
@@ -117,7 +125,7 @@ impl Joint {
         let fy = error_y * strength - rel_vy * damping;
         
         // on pousse A vers sa cible
-        if self.hold {
+        if hold {
             particles[self.a].vx = 0.0;
             particles[self.a].vy = 0.0;
             
@@ -220,6 +228,7 @@ pub struct  Creature {
 
     // [top_left, top_right, bottom_left, bottom_right]
     pub target_pos_lst: Vec<Vec<Vec<f32>>>,
+    pub hold_lst: Vec<Vec<bool>>,
     pos_time : f32,
 }
 
@@ -241,6 +250,7 @@ impl Creature {
             links : vec![],
             joints : vec![],
             target_pos_lst : vec![],
+            hold_lst : vec![],
             pos_time : 5.0,
 
         };
@@ -324,10 +334,15 @@ impl Creature {
         self.joints.push(Joint::new(9, 10, 11));
         
         // set target positions
-        //self.target_pos = vec![vec![-50.0, -50.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![50.0, 50.0]];
         let target_pos_1 = vec![vec![-50.0, -50.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![50.0, 50.0]];
         let target_pos_2 = vec![vec![-25.0, -70.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![-50.0, 50.0]];
         self.target_pos_lst = vec![target_pos_1, target_pos_2];
+        
+        // set hold list
+        let hold_1 = vec![true, false, false, false];
+        let hold_2 = vec![false, true, false, false];
+        self.hold_lst = vec![hold_1, hold_2];        
+
     }
 
     pub fn update(&mut self, time:f32) {
@@ -335,14 +350,16 @@ impl Creature {
 
         let trg_pos_idx = ((time / self.pos_time) as usize) % self.target_pos_lst.len();  
         let target_pos = &self.target_pos_lst[trg_pos_idx];
+        let cur_hold = &self.hold_lst[trg_pos_idx]; 
+        
         // update links
         for link in &mut self.links {
             link.update(&mut self.particles);
         }
 
         // update joints
-        for (join, pos) in self.joints.iter_mut().zip(target_pos.iter()){   
-            join.update(&mut self.particles, pos[0], pos[1], 0.2);
+        for ((join, pos), hold) in self.joints.iter_mut().zip(target_pos.iter()).zip(cur_hold.iter()){   
+            join.update(&mut self.particles, pos[0], pos[1], 0.2, *hold);
         }
     }
 
