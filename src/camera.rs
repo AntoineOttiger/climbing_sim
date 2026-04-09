@@ -23,7 +23,7 @@ impl Camera2DWorld {
         (world - self.pos) * self.zoom + center
     }
 
-    fn screen_to_world(&self, screen: Vec2) -> Vec2 {
+    pub fn screen_to_world(&self, screen: Vec2) -> Vec2 {
         let center = self.screen_center();
         (screen - center) / self.zoom + self.pos
     }

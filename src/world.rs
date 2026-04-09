@@ -104,7 +104,7 @@ impl World{
         }
     
     fn init(&mut self) {
-  
+
     }
 
 
@@ -126,20 +126,6 @@ impl World{
 
                 p.step(dt, self.gravity);
 
-                if p.x - self.radius <= 0.0 {
-                    p.x = self.radius;
-                    p.vx = -p.vx * self.wall_restitution;
-                }
-
-                if p.x + self.radius >= self.w {
-                    p.x = self.w - self.radius;
-                    p.vx = -p.vx * self.wall_restitution;
-                }
-
-                if p.y - self.radius <= 0.0 {
-                    p.y = self.radius;
-                    p.vy = -p.vy * self.wall_restitution;
-                }
 
                 if p.y + self.radius >= self.h {
                     p.y = self.h - self.radius;
@@ -207,6 +193,21 @@ impl World{
                 draw_world_point(&self.cam, vec2(p.x, p.y), self.radius, p.color);
             }        
         }
+
+        let top_left = self.cam.screen_to_world(vec2(0.0, 0.0));
+        let bottom_right = self.cam.screen_to_world(vec2(screen_width(), screen_height()));
+
+        let min_x = top_left.x.min(bottom_right.x);
+        let max_x = top_left.x.max(bottom_right.x);
+
+
+        //Draw world ground
+        draw_world_line(&self.cam, 
+                vec2(min_x, self.h), 
+                vec2(max_x, self.h), 
+                10.0, 
+                GRAY);
+
         self.last_mouse = mouse;
     }
 }
