@@ -7,6 +7,7 @@ use climbing_sim::camera::Camera2DWorld;
 
 
 
+
 #[macroquad::main("Climbing Sim")]
 async fn main() {
 
