@@ -1,5 +1,6 @@
 use macroquad::prelude::*;
 
+use crate::creature::Features;
 use crate::creature::Creature;
 use crate::creature::Particle;
 use crate::camera::Camera2DWorld;
@@ -69,8 +70,8 @@ pub struct World {
     w : f32,
     h : f32,
     time : f32,
-    cam : Camera2DWorld,
     last_mouse : Vec2,
+    cam : Camera2DWorld,
 }
 
 impl World{
@@ -84,6 +85,7 @@ impl World{
             solver_iterations: i16,
             w : f32,
             h : f32,
+            cam : Camera2DWorld
         ) -> Self {
             let mut world  = Self {
                 creatures,
@@ -94,8 +96,8 @@ impl World{
                 solver_iterations,
                 w,
                 h,
+                cam,
                 time : 0.0,
-                cam : Camera2DWorld::new(),
                 last_mouse : vec2(0.0, 0.0),
             };
             world.init();
@@ -105,6 +107,15 @@ impl World{
     
     fn init(&mut self) {
 
+    }
+    pub fn retrieve_creatures_heights(&mut self) -> Vec<f32> {
+
+        let mut creatures_heights = vec![];
+        for creature in &self.creatures{
+            creatures_heights.push(creature.particles[13].y);
+
+        }
+        return creatures_heights;
     }
 
 
@@ -162,7 +173,7 @@ impl World{
 
     pub fn draw(&mut self){
 
-        clear_background(BLACK);
+
 
         let mouse = {
         let (mx, my) = mouse_position();

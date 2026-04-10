@@ -1,9 +1,20 @@
 use std::f32;
+use std::collections::HashMap;
 
 use macroquad::prelude::*;
 
 use crate::camera::Camera2DWorld;
 use crate::camera::draw_world_line;
+
+
+#[derive(Clone)]
+pub struct Features {
+    pub target_pos_lst: Vec<Vec<Vec<f32>>>,
+    pub hold_lst :Vec<Vec<bool>>,
+}
+
+      
+
 
 #[derive(Copy, Clone)]
 pub struct Particle {
@@ -13,11 +24,6 @@ pub struct Particle {
     pub vy: f32,
     pub color: Color,
     pub hold : bool,
-}
-
-enum Pos {
-    Float(f32),
-    Bool(bool)
 }
 
 impl Particle {
@@ -221,6 +227,8 @@ pub struct  Creature {
     color : Color,
     limb_length : Vec<f32>,
     skel_length :Vec<f32>,
+    init_pos : Vec2,
+    features : Features,
     
     pub particles: Vec<Particle>,
     pub links:Vec<Link>,
@@ -237,13 +245,16 @@ impl Creature {
         color : Color,
         limb_length :Vec<f32>,
         skel_length :Vec<f32>,
-
+        init_pos : Vec2,
+        features : Features,
 
     ) -> Self {
         let mut creature = Self {
             color,
             limb_length : limb_length,
             skel_length : skel_length,
+            init_pos : init_pos,
+            features : features,
 
 
             particles : vec![],
@@ -275,8 +286,8 @@ impl Creature {
         let clavicule_support = (clavicle*clavicle + trunc*trunc).sqrt(); 
         let hip_support = (hip*hip + trunc*trunc).sqrt(); 
 
-        let pos_x = 100.0;
-        let pos_y = 100.0; 
+        let pos_x = self.init_pos.x;
+        let pos_y = self.init_pos.y; 
 
         //left arm
         self.particles.push(Particle::new(pos_x, pos_y, 0.0, 0.0, self.color));
@@ -334,14 +345,10 @@ impl Creature {
         self.joints.push(Joint::new(9, 10, 11));
         
         // set target positions
-        let target_pos_1 = vec![vec![-50.0, -50.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![50.0, 50.0]];
-        let target_pos_2 = vec![vec![-25.0, -70.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![-50.0, 50.0]];
-        self.target_pos_lst = vec![target_pos_1, target_pos_2];
+        self.target_pos_lst = self.features.target_pos_lst.clone();
         
         // set hold list
-        let hold_1 = vec![true, false, false, false];
-        let hold_2 = vec![false, true, false, false];
-        self.hold_lst = vec![hold_1, hold_2];        
+        self.hold_lst = self.features.hold_lst.clone();    
 
     }
 
