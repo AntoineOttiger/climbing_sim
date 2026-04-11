@@ -10,7 +10,7 @@ impl Camera2DWorld {
     pub fn new() -> Self {
         Self {
             pos: vec2(0.0, 0.0),
-            zoom: 1.0,
+            zoom: 0.5,
         }
     }
 

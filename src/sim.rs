@@ -3,7 +3,7 @@ use macroquad::prelude::*;
 use crate::world::World;
 use crate::camera::Camera2DWorld;
 use crate::creature::Creature;
-use crate::creature::Features;
+use crate::features::Features;
 
 pub struct Sim{
     features_lst : Vec<Features>,
@@ -46,6 +46,13 @@ impl Sim {
         }
 
     }
+    
+    pub fn get_height_scores(&mut self) -> Vec<f32> {
+        self.world_lst
+            .iter_mut()  // ← iter_mut au lieu de iter
+            .map(|world| world.retrieve_creatures_heights()[0])// one creature per world
+            .collect()
+    }
 
     pub fn step(&mut self, dt : f32){
         for world in &mut self.world_lst{
@@ -75,7 +82,7 @@ impl Sim {
 
         World::new(
             creatures,
-            10.0,
+            500.0,
             7.0,
             0.8,
             0.95,

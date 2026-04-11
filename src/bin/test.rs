@@ -2,7 +2,7 @@ use macroquad::prelude::*;
 
 
 use climbing_sim::sim::Sim;
-use climbing_sim::creature::Features;
+use climbing_sim::features::Features;
 use climbing_sim::camera::Camera2DWorld;
 
 
@@ -17,7 +17,7 @@ async fn main() {
     let hold_1 = vec![true, false, false, false];
     let hold_2 = vec![false, true, false, false];
     let hold_lst = vec![hold_1, hold_2];
-    let features = Features{target_pos_lst : target_pos_lst, hold_lst : hold_lst};
+    let features = Features{target_pos_lst : target_pos_lst, hold_lst : hold_lst, pos_time : 0.5};
     let mut features_lst = vec![];
     features_lst.push(features.clone());
     features_lst.push(features.clone());

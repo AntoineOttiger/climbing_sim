@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::creature::Features;
+use crate::features::Features;
 use crate::creature::Creature;
 use crate::creature::Particle;
 use crate::camera::Camera2DWorld;

@@ -1,19 +1,11 @@
 use std::f32;
-use std::collections::HashMap;
+
 
 use macroquad::prelude::*;
 
 use crate::camera::Camera2DWorld;
 use crate::camera::draw_world_line;
-
-
-#[derive(Clone)]
-pub struct Features {
-    pub target_pos_lst: Vec<Vec<Vec<f32>>>,
-    pub hold_lst :Vec<Vec<bool>>,
-}
-
-      
+use crate::features::Features;
 
 
 #[derive(Copy, Clone)]
@@ -237,7 +229,7 @@ pub struct  Creature {
     // [top_left, top_right, bottom_left, bottom_right]
     pub target_pos_lst: Vec<Vec<Vec<f32>>>,
     pub hold_lst: Vec<Vec<bool>>,
-    pos_time : f32,
+
 }
 
 impl Creature {
@@ -262,7 +254,7 @@ impl Creature {
             joints : vec![],
             target_pos_lst : vec![],
             hold_lst : vec![],
-            pos_time : 5.0,
+
 
         };
         creature.init();
@@ -355,7 +347,7 @@ impl Creature {
     pub fn update(&mut self, time:f32) {
         
 
-        let trg_pos_idx = ((time / self.pos_time) as usize) % self.target_pos_lst.len();  
+        let trg_pos_idx = ((time / self.features.pos_time) as usize) % self.target_pos_lst.len();  
         let target_pos = &self.target_pos_lst[trg_pos_idx];
         let cur_hold = &self.hold_lst[trg_pos_idx]; 
         
