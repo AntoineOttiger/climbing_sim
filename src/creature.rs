@@ -227,7 +227,7 @@ pub struct  Creature {
     pub joints: Vec<Joint>,
 
     // [top_left, top_right, bottom_left, bottom_right]
-    pub target_pos_lst: Vec<Vec<Vec<f32>>>,
+    pub target_pos_lst: Vec<Vec<Vec2>>,
     pub hold_lst: Vec<Vec<bool>>,
 
 }

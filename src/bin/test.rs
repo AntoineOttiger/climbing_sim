@@ -11,8 +11,8 @@ use climbing_sim::camera::Camera2DWorld;
 #[macroquad::main("Climbing Sim")]
 async fn main() {
 
-    let target_pos_1 = vec![vec![-50.0, -50.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![50.0, 50.0]];
-    let target_pos_2 = vec![vec![-25.0, -70.0], vec![50.0, -50.0], vec![-50.0, 50.0], vec![-50.0, 50.0]];
+    let target_pos_1 = vec![vec2(-50.0, -50.0), vec2(50.0, -50.0), vec2(-50.0, 50.0), vec2(50.0, 50.0)];
+    let target_pos_2 = vec![vec2(-25.0, -70.0), vec2(50.0, -50.0), vec2(-50.0, 50.0), vec2(-50.0, 50.0)];
     let target_pos_lst = vec![target_pos_1, target_pos_2];
     let hold_1 = vec![true, false, false, false];
     let hold_2 = vec![false, true, false, false];
